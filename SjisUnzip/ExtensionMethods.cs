@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -45,9 +45,9 @@ namespace SjisUnzip
 		/// <see cref="RawTranscode"/>
 		/// <param name="str">The garbled string.</param>
 		/// <returns>A fixed unicode string.</returns>
-		public static string DecodeMojibake(this string str)
+		public static string Decode(this string str, Encoding encoding)
 		{
-			return str.RawTranscode(Encoding.Default, Encoding.GetEncoding(932));
+			return str.RawTranscode(Encoding.Default, encoding);
 		}
 
 		/// <summary>
@@ -60,25 +60,68 @@ namespace SjisUnzip
 		/// <returns>Boolean flag if any characters found.</returns>
 		public static bool ContainsJapanese(this string str)
 		{
-			return str.Any(c =>
-				// Punctuation, Hiragana, Katakana
-				(c > 0x3000 && c < 0x30ff) ||
-				// Romaji and half-width kana
-				(c > 0xff00 && c < 0xffef) ||
-				// CJK Extension
-				(c > 0x3400 && c < 0x4dbf) ||
-				// CJK
-				(c > 0x4e00 && c < 0x9fff)
-			);
+			return str.Any(c => (c.JapaneseScore() > 0));
 		}
 
-		/// <summary>
-		/// Convenience method calling Console.WriteLine. Looks cool too.
-		/// </summary>
-		/// <example>
-		/// "Hello World".wl();
-		/// </example>
-		public static void wl(this string str)
+        public static int JapaneseScore(this string str)
+        {
+            int score = 0;
+            foreach (char c in str)
+            {
+                score += c.JapaneseScore();
+            }
+            if (score > 0)
+                return score;
+            return 0;
+        }
+
+        public static string ReEncode(this string str, Encoding original, Encoding decodedWith)
+        {
+            byte[] originalBytes = decodedWith.GetBytes(str);
+
+            char[] originalChars = new char[original.GetCharCount(originalBytes, 0, originalBytes.Length)];
+            original.GetChars(originalBytes, 0, originalBytes.Length, originalChars, 0);
+
+            return new string(originalChars);
+        }
+
+        public static int JapaneseScore(this char c)
+        {
+            if (c >= 0x3041 && c <= 0x3096) // hiragana
+                return 1000;
+
+            if (c >= 0x30a1 && c <= 0x30f7) // katakana
+                return 1000;
+
+            // Romaji and half-width kana
+            if (c > 0xff00 && c < 0xffef)
+                return 10;
+
+            // CJK unifed ideographs - Common and uncommon kanji
+            if (c > 0x4e00 && c < 0x9fff)
+                return 5;
+
+            // CJK Extension A - Rare kanji
+            if (c > 0x3400 && c < 0x4dbf)
+                return 1;
+
+            // Japanese punctuation, misc. hiragana / katakana
+            if (c > 0x3000 && c <= 0x30ff)
+                return 1;
+
+            if (c == 63) // ? character, often shows up in bad translations
+                return -5000;
+
+            return -100;
+        }
+
+        /// <summary>
+        /// Convenience method calling Console.WriteLine. Looks cool too.
+        /// </summary>
+        /// <example>
+        /// "Hello World".wl();
+        /// </example>
+        public static void wl(this string str)
 		{
 			Console.WriteLine(str);
 		}
