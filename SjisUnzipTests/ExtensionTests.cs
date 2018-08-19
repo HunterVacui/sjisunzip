@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -41,7 +41,7 @@ namespace SjisUnzipTests
 		[TestMethod]
 		public void TestDecodeMojibake()
 		{
-			var degarbled = textGarbled.DecodeMojibake();
+			var degarbled = textGarbled.Decode(sjisEncoding);
 			Assert.AreEqual(textCorrect, degarbled, "Degarbled text should be equivalent to the uncorrupted original.");
 		}
 
