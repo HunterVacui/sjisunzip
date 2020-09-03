@@ -1,9 +1,17 @@
-sjisunzip
-=========
+# This is a Fork of kjerk's "sjisunzip" utility.
 
-This is a pretty braindead command line utility that simply forces the encoding to the right values to extract a Shift JIS encoded zip file ('[Code page 932](http://en.wikipedia.org/wiki/Code_page_932)') on a western/ansi encoding system.
+[See kjerk's original version here](https://github.com/kjerk/sjisunzip)
 
-[Download Here](https://github.com/kjerk/sjisunzip/releases)
+# Basic Usage
+
+If you've attempted to unzip a file that was created on a Japanese computer, you might see files with completely garbled text.
+
+In some cases, this might make the files unusuable (eg. If the contents of the files contain the names of other files, those references won't work anymore)
+
+
+This can happen because the original file was created on a machine that has one default "encoding", and you've tried to unzip it on your own machine which has a different default "encoding", which gives you bad results.
+
+Use this utility to unzip your file, using an appropriate encoding translation.
 
 ```
 Usage:
@@ -15,22 +23,22 @@ Examples:
   sjisunzip aFile.zip MyNewFolder
 ```
 
-You can also just drop a zip file onto the program since that'll pass it as the first argument and the contents will be extracted in the same directory.
+# Advanced Usage
 
-If you've ever received a zip file from a friend, or the wrong damn gnu mirror or whatever that passed through Japan then you've probably seen garbled filenames
-![example_1](https://cloud.githubusercontent.com/assets/2738686/5326938/37acc0de-7ce7-11e4-8259-06ef8b1f43a8.jpg)
----
+```
+Examples:
+   sjisunzip SomeZipThatDidntWorkWithTheAboveSteps.zip --find_best_target
+   sjisunzip SomeZipFileEncodedWithEncoding1234.zip -s:1234
+   sjisunzip NothingElseIsWorkingWithThisZipFile.zip --all_sources -p
+```
 
-Well this program forces the opened zip to the correct encoding then extracts the file to a more reasonable UTF encoding.
-![example_2](https://cloud.githubusercontent.com/assets/2738686/5326978/712d7e50-7ce9-11e4-8f18-c885afc51055.jpg)
----
+In some less common cases, the options above may not be enough to fix your file names. This is because we have to assume what encoding the file made with, and we may have guessed wrong.
 
-You can even just reencode the zip file to a less busted-ass one so you don't have this creeping horror issue in the future
-![example_3](https://cloud.githubusercontent.com/assets/2738686/5326937/37ab2878-7ce7-11e4-9655-61b92a2b680d.jpg)
----
+If your folder still contains the wrong file names, try the `--find_best_target` command ling option, which will attempt to decode the target files with all the encoders available on the user's machine, rate the results, and then commit the operation using the "best" version. Useful for when the default UTF8 doesn't return correct results
 
-The filenames and paths should be untangled when done.
-![example_4](https://cloud.githubusercontent.com/assets/2738686/5326940/37af9d72-7ce7-11e4-8ee2-3a9d11c6e669.jpg)
----
+If nothing else is working, you can use the `--all_sources` command line option, as a way to print out all the encodings available on your machine as well as some information about the sjisunzip's "score" for each encoding. You can then use the `-s:` command line option to try out one of those encodings as the "source encoding" (the encoding that you think the file was made with
 
-Bonus fact: When this type of transitive corruption occurs, the output characters are called [Mojibake](http://en.wikipedia.org/wiki/Mojibake). That's almost cute enough to not be awful anymore.
+For power users, you can also use `-t:` as the "Target encoding" (the encoding that you want to write the file to)
+
+The command line option `-p` causes the program to halt upon completion, which can be useful for vieweing the output if you're running the script through a process where the window automatically closes when the program exits (such as if you set the program up as a "send to" windows target)
+
