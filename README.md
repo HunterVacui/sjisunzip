@@ -15,9 +15,9 @@ Use this utility to unzip your file, using an appropriate encoding translation.
 
 ```
 Usage:
-  sjisunzip someFile.zip [toFolder]
-  sjisunzip [-r] someFile.zip
-    -r: Recode file to {filename}_utf8.zip
+  sjisunzip [flags] someFile.zip [toFolder]
+  sjisunzip someFolderContainingFilesWithBadNames
+  
 Examples:
   sjisunzip aFile.zip
   sjisunzip aFile.zip MyNewFolder
@@ -26,11 +26,35 @@ Examples:
 # Advanced Usage
 
 ```
+Flags:
+      -r                  Instead of unzipping to a folder, make a new zip file with UTF8 uncoding, named {filename}_utf8.zip,
+                          which you should then be able to open with any standard zip program without naming problems
+      --find_best_target  Compares the results of different target encodings to try to find the best results.
+      -s:<number>         Specify an override source encoding. Default is 932 (Shift JIS, AKA Windows-932, AKA CP932, AKA Windows-31J)
+                          use --all_sources to find a good source encoding
+      -t:<number>         Specify an override target encoding. Default is 65001 (UTF8)
+                          using --find_best_target causes this parameter to be ignored
+      -p                  pause on exit
+      
+Usage:
+			sjisunzip some_folder_with_corrupt_filenames
+      sjisunzip --all_sources someText [outputFile.txt]
+          Attempts to use different source encoding schemes to decode the text, prints the output to a given file
+          
+      
 Examples:
-   sjisunzip SomeZipThatDidntWorkWithTheAboveSteps.zip --find_best_target
-   sjisunzip SomeZipFileEncodedWithEncoding1234.zip -s:1234
-   sjisunzip NothingElseIsWorkingWithThisZipFile.zip --all_sources -p
+  Unusual Case: Unzip a file that doesn't seem to have been encoding with Shift JIS (default sjisunzip didn't work)
+      sjisunzip --find_best_target SomeZipThatDidntWorkWithTheAboveSteps.zip
+      
+  Unusual Case: Same case as above but --find_best_target didn't work
+      sjisunzip --all_sources "C:\tmp\iƒeƒLƒXƒgƒtƒ@ƒCƒ‹j.zip"
+      sjisunzip -s:<pick_a_value_from_the_output_of_the_previous_step> SomeZipFileEncodedWithEncoding1234.zip
+      
+  Unusual Case: Fixing a folder you unzipped when you don't have the original zip anymore
+      sjisunzip -s:65001 -t:932 SomeFolderYouScrewedUpBecauseItWasZippedWithShiftJisAndYouAlreadyUnzippedItAsUTF8
+      sjisunzip -s:932 -t:65001 SomeFolderYouScrewedUpBecauseItWasZippedWithShiftJisAndYouAlreadyUnzippedItAsUTF8
 ```
+
 
 In some less common cases, the options above may not be enough to fix your file names. This is because we have to assume what encoding the file made with, and we may have guessed wrong.
 
