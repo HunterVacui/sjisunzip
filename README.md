@@ -30,14 +30,19 @@ Flags:
       -r                  Instead of unzipping to a folder, make a new zip file with UTF8 uncoding, named {filename}_utf8.zip,
                           which you should then be able to open with any standard zip program without naming problems
       --find_best_target  Compares the results of different target encodings to try to find the best results.
-      -s:<number>         Specify an override source encoding. Default is 932 (Shift JIS, AKA Windows-932, AKA CP932, AKA Windows-31J)
-                          use --all_sources to find a good source encoding
-      -t:<number>         Specify an override target encoding. Default is 65001 (UTF8)
+      -s:<number>         Specify an override source encoding. (What the file was created with)
+                               Default is 932 (Shift JIS, AKA Windows-932, AKA CP932, AKA Windows-31J)
+      -t:<number>         Specify an override target encoding. (What you the new file to be encoded with)
+                               Default is 65001 (UTF8)
                           using --find_best_target causes this parameter to be ignored
+      --all_sources       Special utility to help with -s command line option. Does not create a new file or folder. Instead,
+                          takes your input file, runs it through the encoders available on your machine, and prints out a
+			  list of the encoders along with a score representing how likely it is that the encoder was used to
+			  generate the file.
       -p                  pause on exit
       
 Usage:
-			sjisunzip some_folder_with_corrupt_filenames
+      sjisunzip some_folder_with_corrupt_filenames
       sjisunzip --all_sources someText [outputFile.txt]
           Attempts to use different source encoding schemes to decode the text, prints the output to a given file
           
