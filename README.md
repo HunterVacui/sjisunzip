@@ -19,7 +19,7 @@ Usage:
   sjisunzip someFolderContainingFilesWithBadNames
   
 Examples:
-  sjisunzip aFile.zip
+  sjisunzip --find_best_target aFile.zip
   sjisunzip aFile.zip MyNewFolder
 ```
 
