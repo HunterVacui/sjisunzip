@@ -52,12 +52,13 @@ Examples:
       sjisunzip --find_best_target SomeZipThatDidntWorkWithTheAboveSteps.zip
       
   Unusual Case: Same case as above but --find_best_target didn't work
-      sjisunzip --all_sources "C:\tmp\iƒeƒLƒXƒgƒtƒ@ƒCƒ‹j.zip"
+      sjisunzip --all_sources "C:\tmp\iƒeƒLƒXƒgƒtƒ@ƒCƒ‹j.zip"
       sjisunzip -s:<pick_a_value_from_the_output_of_the_previous_step> SomeZipFileEncodedWithEncoding1234.zip
       
-  Unusual Case: Fixing a folder you unzipped when you don't have the original zip anymore
-      sjisunzip -s:65001 -t:932 SomeFolderYouScrewedUpBecauseItWasZippedWithShiftJisAndYouAlreadyUnzippedItAsUTF8
-      sjisunzip -s:932 -t:65001 SomeFolderYouScrewedUpBecauseItWasZippedWithShiftJisAndYouAlreadyUnzippedItAsUTF8
+  Unusual Case: Fixing a folder with bad file names. Presumably, the contents of a zip file you already unzipped before,
+                which now has messed up file names, but you don't have the original zip anymore and you're desperate
+      sjisunzip -s:65001 -t:932 YourSpecialFolder       -- put the file names back into Shift-JIS, from your mangled UTF-8
+      sjisunzip -s:932 -t:65001 YourSpecialFolder       -- properly translate the file from Shift-JIS to UTF-8 this time
 ```
 
 
